@@ -8,12 +8,13 @@ const {
     searchClients,
 } = require('./controllers/clientController');
 const {fetchClients} = require('./crawler');
+const {validate} = require('./middleware/validate')
 
 const router = express.Router();
 
 router.get('/fetch', fetchClients);
 router.get('/clients', getAllClients);
-router.post('/clients', createClient);
+router.post('/clients', validate, createClient);
 router.get('/clients/:id', getClientById);
 router.post('/clients/:id', updateClient);
 router.delete('/clients/:id', deleteClient);

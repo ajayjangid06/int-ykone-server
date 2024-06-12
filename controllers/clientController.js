@@ -22,21 +22,21 @@ const getAllClients = async (req, res) => {
 const createClient = async (req, res) => {
     try {
         const {name, email, cin, pin} = req.body;
-        if(validateFields(cin, pin, email)){
-            const client = await Client.create(req.body);
-            await esClient.index({
-                index: 'clients',
-                id: cin.toString(),
-                body: {
-                    name,
-                    cin,
-                    email
-                }
-            });
-            res.status(201).json(client);
-        } else {
-            res.status(500).json({ error: 'Data not valid' });
-        }
+        const client = await Client.create(req.body);
+        await esClient.index({
+            index: 'clients',
+            id: cin.toString(),
+            body: {
+                name,
+                cin,
+                email
+            }
+        });
+        res.status(201).json(client);
+        // if(validateFields(cin, pin, email)){
+        // } else {
+        //     res.status(500).json({ error: 'Data not valid' });
+        // }
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -114,6 +114,19 @@ const searchClients = async (req, res) => {
         //         ],
         //     },
         // });
+        // SELECT * FROM client WHERE name LIKE 'term%' OR email LIKE '%term%' OR cin LIKE '%term%';
+                
+        // ALTER
+        // IF table EXISTS - don't create else create table
+
+
+        // CREATE TABLE Client (
+        //     cin varchar(21) UNIQUE NOT NULL,
+        //     pin int() NOT NULL,
+        //     name varchar(255) NOT NULL,
+        //     email varchar(255) NOT NULL,
+        //     primarykey as cin
+        // )
         const {hits} = await esClient.search({
             index: 'clients',
             body: {
